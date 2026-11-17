@@ -43,9 +43,10 @@ namespace TopDownSurvivor.Weapons
         /// <summary>
         /// 发射时调用：设定飞行方向，并记录它属于哪个对象池。
         /// </summary>
-        public void Init(Vector3 direction, ObjectPool<Bullet> pool)
+        public void Init(Vector3 direction, ObjectPool<Bullet> pool, int damage)
         {
             _pool = pool;
+            _damage = damage; // 用传入的伤害覆盖默认值
             _rb.velocity = direction.normalized * _speed; // 用刚体速度飞行
 
             // 启动超时回收计时

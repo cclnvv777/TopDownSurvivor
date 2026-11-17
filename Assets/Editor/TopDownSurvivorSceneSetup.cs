@@ -5,28 +5,44 @@ using UnityEngine;
 using TopDownSurvivor.Core;
 using TopDownSurvivor.Enemies;
 using TopDownSurvivor.Player;
+using TopDownSurvivor.Systems;
+using TopDownSurvivor.Weapons;
 
 namespace TopDownSurvivor.Editor
 {
     /// <summary>
-    /// 一键搭建场景：创建玩家、GameManager，并配置相机。
+    /// 一键搭建场景：创建玩家、敌人、刷怪器、GameManager，并配置相机。
     /// 菜单：Tools &gt; TopDownSurvivor &gt; Setup Scene
     /// </summary>
     public static class TopDownSurvivorSceneSetup
     {
         private const string MenuPath = "Tools/TopDownSurvivor/Setup Scene";
         private const string PlaceholderAssetPath = "Assets/Sprites/PlayerPlaceholder.png";
+        private const string BulletPrefabPath = "Assets/Prefabs/Bullet.prefab";
+        private const string EnemyPrefabPath = "Assets/Prefabs/Enemy.prefab";
 
         [MenuItem(MenuPath)]
         public static void SetupScene()
         {
             SetupPlayer();
             SetupEnemy();
+            SetupEnemySpawner();
             SetupGameManager();
             SetupCamera();
+            SetupExperienceSystem();
+            SetupUpgradeManager();
 
-            EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
-            Debug.Log("[TopDownSurvivor] 场景搭建完成：Player / Enemy / GameManager / Main Camera 已就绪。");
+            var activeScene = EditorSceneManager.GetActiveScene();
+            if (string.IsNullOrEmpty(activeScene.path))
+            {
+                Debug.LogWarning("[TopDownSurvivor] 当前是未保存的空场景，请先双击打开 Assets/Scenes/SampleScene，再运行本工具。");
+            }
+            else
+            {
+                EditorSceneManager.SaveScene(activeScene);
+            }
+
+            Debug.Log("[TopDownSurvivor] 场景搭建完成：Player / Enemy / EnemySpawner / GameManager / Main Camera 已就绪。");
         }
 
         private static void SetupPlayer()
@@ -68,6 +84,21 @@ namespace TopDownSurvivor.Editor
             {
                 player.AddComponent<PlayerMovement>();
             }
+
+            // 自动攻击：挂组件并自动设置子弹预制体引用
+            PlayerAutoAttack autoAttack = player.GetComponent<PlayerAutoAttack>();
+            if (autoAttack == null)
+            {
+                autoAttack = player.AddComponent<PlayerAutoAttack>();
+            }
+
+            Bullet bulletPrefab = AssetDatabase.LoadAssetAtPath<Bullet>(BulletPrefabPath);
+            SetReference(autoAttack, "_bulletPrefab", bulletPrefab);
+
+            if (player.GetComponent<PlayerExperience>() == null)
+            {
+                player.AddComponent<PlayerExperience>();
+            }
         }
 
         private static void SetupEnemy()
@@ -94,6 +125,25 @@ namespace TopDownSurvivor.Editor
 
             // 初始放在玩家右上方，方便观察追击
             enemy.transform.position = new Vector3(3f, 3f, 0f);
+        }
+
+        private static void SetupEnemySpawner()
+        {
+            GameObject spawner = GameObject.Find("EnemySpawner");
+            if (spawner == null)
+            {
+                spawner = new GameObject("EnemySpawner");
+            }
+
+            EnemySpawner es = spawner.GetComponent<EnemySpawner>();
+            if (es == null)
+            {
+                es = spawner.AddComponent<EnemySpawner>();
+            }
+
+            // 自动设置敌人预制体引用
+            Enemy enemyPrefab = AssetDatabase.LoadAssetAtPath<Enemy>(EnemyPrefabPath);
+            SetReference(es, "_enemyPrefab", enemyPrefab);
         }
 
         private static void SetupGameManager()
@@ -128,8 +178,83 @@ namespace TopDownSurvivor.Editor
             cam.backgroundColor = new Color(0.08f, 0.08f, 0.12f);
         }
 
+        private static void SetupExperienceSystem()
+        {
+            // 经验掉落器：订阅敌人死亡事件，生成经验宝石
+            GameObject dropper = GameObject.Find("ExperienceDropper");
+            if (dropper == null)
+            {
+                dropper = new GameObject("ExperienceDropper");
+            }
+
+            ExperienceDropper ed = dropper.GetComponent<ExperienceDropper>();
+            if (ed == null)
+            {
+                ed = dropper.AddComponent<ExperienceDropper>();
+            }
+
+            ExperienceGem gemPrefab = EnsureGemPrefab();
+            SetReference(ed, "_gemPrefab", gemPrefab);
+        }
+
+        private static void SetupUpgradeManager()
+        {
+            GameObject um = GameObject.Find("UpgradeManager");
+            if (um == null)
+            {
+                um = new GameObject("UpgradeManager");
+            }
+
+            if (um.GetComponent<UpgradeManager>() == null)
+            {
+                um.AddComponent<UpgradeManager>();
+            }
+        }
+
         /// <summary>
-        /// 生成并持久化一张白色占位图，作为玩家的临时精灵。
+        /// 确保经验宝石预制体存在，不存在则自动创建并保存。
+        /// </summary>
+        private static ExperienceGem EnsureGemPrefab()
+        {
+            const string gemPath = "Assets/Prefabs/ExperienceGem.prefab";
+            ExperienceGem gem = AssetDatabase.LoadAssetAtPath<ExperienceGem>(gemPath);
+            if (gem != null)
+            {
+                return gem;
+            }
+
+            GameObject go = new GameObject("ExperienceGem");
+            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = EnsurePlaceholderSprite();
+            sr.color = new Color(0.4f, 1f, 0.4f); // 绿色
+
+            CircleCollider2D col = go.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+            col.radius = 0.4f;
+
+            go.AddComponent<ExperienceGem>();
+
+            ExperienceGem prefab = PrefabUtility.SaveAsPrefabAsset(go, gemPath).GetComponent<ExperienceGem>();
+            Object.DestroyImmediate(go);
+            return prefab;
+        }
+
+        /// <summary>
+        /// 通过 SerializedObject 设置组件上的私有 [SerializeField] 字段（用于自动配置预制体引用）。
+        /// </summary>
+        private static void SetReference(UnityEngine.Object target, string fieldName, UnityEngine.Object value)
+        {
+            SerializedObject so = new SerializedObject(target);
+            SerializedProperty prop = so.FindProperty(fieldName);
+            if (prop != null)
+            {
+                prop.objectReferenceValue = value;
+                so.ApplyModifiedProperties();
+            }
+        }
+
+        /// <summary>
+        /// 生成并持久化一张白色占位图，作为临时精灵。
         /// </summary>
         private static Sprite EnsurePlaceholderSprite()
         {

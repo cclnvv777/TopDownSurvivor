@@ -29,5 +29,13 @@ namespace TopDownSurvivor.Player
            
             _rb.velocity = input * _moveSpeed;
         }
+
+        /// <summary>
+        /// 提升移动速度（升级强化用）。
+        /// </summary>
+        public void IncreaseMoveSpeed(float amount)
+        {
+            _moveSpeed += amount;
+        }
     }
 }

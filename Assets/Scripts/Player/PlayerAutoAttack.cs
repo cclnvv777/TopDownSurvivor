@@ -14,6 +14,7 @@ namespace TopDownSurvivor.Player
         [SerializeField] private Bullet _bulletPrefab;    // 子弹预制体（在检查器里拖入）
         [SerializeField] private float _fireInterval = 0.5f; // 发射间隔（秒）
         [SerializeField] private int _poolSize = 20;        // 预创建子弹数量
+        [SerializeField] private int _damage = 1;            // 当前攻击力（升级可提升）
 
         private ObjectPool<Bullet> _bulletPool;
 
@@ -45,7 +46,7 @@ namespace TopDownSurvivor.Player
 
             Bullet bullet = _bulletPool.Get();             // 从池里取（不再 Instantiate）
             bullet.transform.position = transform.position; // 设置出生位置
-            bullet.Init(direction, _bulletPool);            // 设定方向 + 归属的池
+            bullet.Init(direction, _bulletPool, _damage);   // 设定方向 + 归属的池 + 伤害
         }
 
         /// <summary>
@@ -73,6 +74,22 @@ namespace TopDownSurvivor.Player
             }
 
             return nearest;
+        }
+
+        /// <summary>
+        /// 提升攻速（发射间隔缩短）。
+        /// </summary>
+        public void IncreaseFireRate(float amount)
+        {
+            _fireInterval = Mathf.Max(0.1f, _fireInterval - amount);
+        }
+
+        /// <summary>
+        /// 提升攻击力（子弹伤害增加）。
+        /// </summary>
+        public void IncreaseDamage(int amount)
+        {
+            _damage += amount;
         }
     }
 }
