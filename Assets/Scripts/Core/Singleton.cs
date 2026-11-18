@@ -17,6 +17,11 @@ namespace TopDownSurvivor.Core
                 if (_instance == null)
                 {
                     _instance = FindFirstObjectByType<T>();
+                    if (_instance == null)
+                    {
+                        // 场景里没有则自动创建，避免空引用
+                        _instance = new GameObject(typeof(T).Name).AddComponent<T>();
+                    }
                 }
 
                 return _instance;

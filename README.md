@@ -8,10 +8,13 @@
 - **敌人追击 AI（Seek）**：通过向量相减 + 归一化实现追踪行为
 - **刷怪系统**：使用协程（Coroutine）定时从玩家四周生成敌人
 - **自动攻击**：遍历敌人查找最近目标（线性求最小值算法）
-- **事件系统（EventBus）**：泛型类型安全事件总线，敌人死亡事件解耦经验掉落等系统
-- **单例管理器（Singleton）**：统一的 MonoBehaviour 单例基类
-- **升级系统**：三选一强化（攻速/攻击力/移速），用代码动态创建 UI
-- **一键搭建场景**：编辑器脚本自动生成玩家/敌人/相机/刷怪器/升级 UI，并自动保存场景
+- **事件系统（EventBus）**：泛型类型安全事件总线，敌人死亡、玩家死亡事件解耦多个系统
+- **单例管理器（Singleton）**：懒加载 MonoBehaviour 单例基类
+- **升级系统**：三选一强化（攻速/攻击力/移速），用洗牌算法去重，代码动态创建 UI
+- **UI 系统**：血条、HUD、菜单、结算全部代码动态创建，不依赖手动拖拽
+- **音效系统**：AudioManager 单例 + 事件触发
+- **存档系统**：PlayerPrefs 保存最高存活时间
+- **一键搭建场景**：编辑器脚本自动生成所有对象、自动设置引用、自动保存场景
 
 ## 已完成功能
 
@@ -19,23 +22,24 @@
 - [x] 敌人追击 AI + 刷怪系统
 - [x] 自动攻击 + 子弹对象池 + 敌人对象池
 - [x] 碰撞检测 + 伤害判定
+- [x] 玩家生命值 + 敌人碰撞伤害 + 死亡
 - [x] 击杀掉落经验宝石 + 自动拾取
 - [x] 升级系统（三选一强化面板）
-- [ ] 玩家生命值 + 碰撞伤害
-- [ ] HUD（血条 / 时间 / 击杀数）
-- [ ] 开始菜单 + 死亡结算
-- [ ] 音效 + 存档 + 打包优化
+- [x] HUD（血条 / 存活时间 / 击杀数）
+- [x] 开始菜单 + 死亡结算 + 重新开始
+- [x] 音效 + 存档（最高分）
+- [ ] 打包发布
 
 ## 目录结构
 
 ```
 Assets/
 ├── Scripts/
-│   ├── Core/       # 核心框架（单例 / 事件总线 / 对象池 / 游戏状态）
-│   ├── Player/     # 玩家逻辑（移动 / 自动攻击 / 经验）
-│   ├── Enemies/    # 敌人逻辑（追击 AI / 刷怪器）
+│   ├── Core/       # 核心框架（单例 / 事件总线 / 对象池 / 音效 / 存档）
+│   ├── Player/     # 玩家（移动 / 自动攻击 / 经验 / 生命值）
+│   ├── Enemies/    # 敌人（追击 AI / 刷怪器）
 │   ├── Weapons/    # 武器（子弹）
-│   └── Systems/    # 系统（经验掉落 / 升级管理）
+│   └── Systems/    # 系统（经验掉落 / 升级 / HUD / 菜单）
 ├── Editor/         # 编辑器工具（一键搭建场景）
 ├── Prefabs/        # 预制体（子弹 / 敌人 / 经验宝石）
 ├── Sprites/        # 占位精灵
@@ -46,20 +50,25 @@ Assets/
 
 | 文件 | 作用 |
 |---|---|
-| Core/Singleton.cs | MonoBehaviour 单例基类，保证全局唯一实例 |
-| Core/EventBus.cs | 泛型事件总线，模块间解耦通信 |
-| Core/GameManager.cs | 游戏状态管理（菜单/游戏中/升级/结束） |
-| Core/ObjectPool.cs | 通用对象池，内部用队列管理复用 |
-| Player/PlayerMovement.cs | 玩家八方向移动 |
-| Player/PlayerAutoAttack.cs | 自动攻击，找最近敌人发射子弹 |
-| Player/PlayerExperience.cs | 经验/等级数据，触发升级 |
-| Enemies/Enemy.cs | 敌人追击 AI + 生命值 + 死亡事件广播 |
-| Enemies/EnemySpawner.cs | 刷怪器，从对象池取敌人 |
-| Weapons/Bullet.cs | 子弹，直线飞行 + 命中回收 |
-| Systems/ExperienceGem.cs | 经验宝石，玩家拾取得经验 |
-| Systems/ExperienceDropper.cs | 订阅敌人死亡事件，掉落经验宝石 |
-| Systems/UpgradeManager.cs | 升级三选一强化面板（代码动态创建 UI） |
-| Editor/TopDownSurvivorSceneSetup.cs | 一键搭建场景，自动配置所有引用 |
+| Core/Singleton.cs | MonoBehaviour 单例基类（懒加载） |
+| Core/EventBus.cs | 泛型事件总线，模块解耦 |
+| Core/GameManager.cs | 游戏状态管理 |
+| Core/ObjectPool.cs | 通用对象池（队列） |
+| Core/AudioManager.cs | 音效单例 + 事件订阅播放 |
+| Core/SaveSystem.cs | 存档（PlayerPrefs 最高分） |
+| Player/PlayerMovement.cs | 八方向移动 |
+| Player/PlayerAutoAttack.cs | 自动攻击（找最近敌人） |
+| Player/PlayerExperience.cs | 经验/等级/升级触发 |
+| Player/PlayerHealth.cs | 生命值/受伤/死亡 |
+| Enemies/Enemy.cs | 追击AI + 生命值 + 死亡事件 |
+| Enemies/EnemySpawner.cs | 刷怪器（对象池） |
+| Weapons/Bullet.cs | 子弹（对象池） |
+| Systems/ExperienceGem.cs | 经验宝石 |
+| Systems/ExperienceDropper.cs | 经验掉落（订阅敌人死亡事件） |
+| Systems/UpgradeManager.cs | 升级三选一强化面板 |
+| Systems/HUDManager.cs | HUD（血条/时间/击杀数） |
+| Systems/MenuManager.cs | 开始菜单 + 死亡结算 + 游戏流程 |
+| Editor/TopDownSurvivorSceneSetup.cs | 一键搭建场景 |
 
 ## 技术栈
 
@@ -79,5 +88,5 @@ Assets/
 2. 阶段 2：敌人追击 AI + 刷怪系统（已完成）
 3. 阶段 3：自动攻击 + 子弹 + 对象池（已完成）
 4. 阶段 4：击杀掉落经验 + 升级系统（已完成）
-5. 阶段 5：完整 UI（进行中）
-6. 阶段 6：音效 + 存档 + 打包 + 优化
+5. 阶段 5：完整 UI（已完成）
+6. 阶段 6：音效 + 存档 + 打包（音效存档完成，打包待做）

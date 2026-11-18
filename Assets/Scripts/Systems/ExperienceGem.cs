@@ -1,4 +1,5 @@
 using UnityEngine;
+using TopDownSurvivor.Core;
 using TopDownSurvivor.Player;
 
 namespace TopDownSurvivor.Systems
@@ -29,6 +30,7 @@ namespace TopDownSurvivor.Systems
             if (playerExp != null)
             {
                 playerExp.AddExperience(_experienceValue);
+                AudioManager.Instance.PlayPickupSound();
                 Destroy(gameObject); // 拾取后销毁（后续可优化为对象池）
             }
         }

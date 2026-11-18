@@ -1,5 +1,6 @@
 using UnityEngine;
 using TopDownSurvivor.Core;
+using TopDownSurvivor.Player;
 
 namespace TopDownSurvivor.Enemies
 {
@@ -23,6 +24,7 @@ namespace TopDownSurvivor.Enemies
     {
         [SerializeField] private float _moveSpeed = 2f;
         [SerializeField] private int _maxHealth = 1; // 生命值（1 发子弹打死）
+        [SerializeField] private int _contactDamage = 10; // 碰到玩家造成的伤害
 
         private int _currentHealth;
         private Transform _player;
@@ -91,6 +93,27 @@ namespace TopDownSurvivor.Enemies
             // 广播「敌人死亡」事件（含死亡位置），谁关心谁订阅——敌人自己不知道有谁在听
             EventBus<EnemyDiedEvent>.Publish(new EnemyDiedEvent(transform.position));
 
+            Recycle();
+        }
+
+        /// <summary>
+        /// 触发器检测：碰到玩家 → 玩家掉血，敌人消失（不掉经验）。
+        /// </summary>
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(_contactDamage);
+                Recycle(); // 碰撞消失（不广播死亡事件，不掉经验）
+            }
+        }
+
+        /// <summary>
+        /// 回收到对象池（或销毁）。
+        /// </summary>
+        private void Recycle()
+        {
             if (_pool != null)
             {
                 _pool.Release(this); // 回池复用

@@ -1,4 +1,5 @@
 using UnityEngine;
+using TopDownSurvivor.Core;
 using TopDownSurvivor.Systems;
 
 namespace TopDownSurvivor.Player
@@ -43,6 +44,7 @@ namespace TopDownSurvivor.Player
 
         private void LevelUp()
         {
+            AudioManager.Instance.PlayLevelUpSound();
             UpgradeManager manager = FindObjectOfType<UpgradeManager>();
             if (manager != null)
             {

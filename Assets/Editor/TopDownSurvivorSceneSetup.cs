@@ -31,6 +31,9 @@ namespace TopDownSurvivor.Editor
             SetupCamera();
             SetupExperienceSystem();
             SetupUpgradeManager();
+            SetupHUD();
+            SetupMenu();
+            SetupAudioManager();
 
             var activeScene = EditorSceneManager.GetActiveScene();
             if (string.IsNullOrEmpty(activeScene.path))
@@ -98,6 +101,11 @@ namespace TopDownSurvivor.Editor
             if (player.GetComponent<PlayerExperience>() == null)
             {
                 player.AddComponent<PlayerExperience>();
+            }
+
+            if (player.GetComponent<PlayerHealth>() == null)
+            {
+                player.AddComponent<PlayerHealth>();
             }
         }
 
@@ -208,6 +216,48 @@ namespace TopDownSurvivor.Editor
             if (um.GetComponent<UpgradeManager>() == null)
             {
                 um.AddComponent<UpgradeManager>();
+            }
+        }
+
+        private static void SetupHUD()
+        {
+            GameObject hud = GameObject.Find("HUDManager");
+            if (hud == null)
+            {
+                hud = new GameObject("HUDManager");
+            }
+
+            if (hud.GetComponent<HUDManager>() == null)
+            {
+                hud.AddComponent<HUDManager>();
+            }
+        }
+
+        private static void SetupMenu()
+        {
+            GameObject menu = GameObject.Find("MenuManager");
+            if (menu == null)
+            {
+                menu = new GameObject("MenuManager");
+            }
+
+            if (menu.GetComponent<MenuManager>() == null)
+            {
+                menu.AddComponent<MenuManager>();
+            }
+        }
+
+        private static void SetupAudioManager()
+        {
+            GameObject am = GameObject.Find("AudioManager");
+            if (am == null)
+            {
+                am = new GameObject("AudioManager");
+            }
+
+            if (am.GetComponent<AudioManager>() == null)
+            {
+                am.AddComponent<AudioManager>();
             }
         }
 
