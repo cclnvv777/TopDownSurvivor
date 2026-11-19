@@ -109,6 +109,11 @@ namespace TopDownSurvivor.Editor
             {
                 player.AddComponent<PlayerHealth>();
             }
+
+            if (player.GetComponent<OrbitingWeapon>() == null)
+            {
+                player.AddComponent<OrbitingWeapon>();
+            }
         }
 
         private static void SetupEnemy()

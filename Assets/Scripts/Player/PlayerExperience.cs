@@ -9,9 +9,12 @@ namespace TopDownSurvivor.Player
     /// </summary>
     public enum UpgradeType
     {
-        FireRate,  // 攻速
-        Damage,    // 攻击力
-        MoveSpeed  // 移速
+        FireRate,      // 攻速
+        Damage,        // 攻击力
+        MoveSpeed,     // 移速
+        MaxHealth,     // 生命上限
+        ExperienceGain,// 经验获取
+        OrbitingBlade  // 环绕刀刃
     }
 
     /// <summary>
@@ -22,6 +25,7 @@ namespace TopDownSurvivor.Player
         [SerializeField] private int _experience = 0;
         [SerializeField] private int _experienceToNextLevel = 5; // 升到下一级需要的经验
         [SerializeField] private int _level = 1;
+        [SerializeField] private float _experienceMultiplier = 1f; // 经验获取倍率
 
         public int Experience => _experience;
         public int Level => _level;
@@ -31,7 +35,7 @@ namespace TopDownSurvivor.Player
         /// </summary>
         public void AddExperience(int amount)
         {
-            _experience += amount;
+            _experience += Mathf.RoundToInt(amount * _experienceMultiplier);
 
             while (_experience >= _experienceToNextLevel)
             {
@@ -50,6 +54,14 @@ namespace TopDownSurvivor.Player
             {
                 manager.ShowUpgrades(); // 弹出三选一强化面板
             }
+        }
+
+        /// <summary>
+        /// 提升经验获取倍率（升级强化用）。
+        /// </summary>
+        public void IncreaseExperienceGain(float amount)
+        {
+            _experienceMultiplier += amount;
         }
     }
 }

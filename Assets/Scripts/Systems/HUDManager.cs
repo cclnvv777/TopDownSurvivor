@@ -12,6 +12,7 @@ namespace TopDownSurvivor.Systems
     public class HUDManager : MonoBehaviour
     {
         private Image _healthFill;
+        private Text _healthText;
         private Text _timeText;
         private Text _killText;
 
@@ -55,6 +56,9 @@ namespace TopDownSurvivor.Systems
 
             // 血条填充比例 = 当前血 / 最大血
             _healthFill.fillAmount = (float)_playerHealth.CurrentHealth / _playerHealth.MaxHealth;
+
+            // 血量数字
+            _healthText.text = _playerHealth.CurrentHealth + "/" + _playerHealth.MaxHealth;
 
             // 存活时间（游戏暂停时不走）
             if (Time.timeScale > 0f)
@@ -128,6 +132,11 @@ namespace TopDownSurvivor.Systems
             fillRt.anchorMax = Vector2.one;
             fillRt.offsetMin = new Vector2(2f, 2f);
             fillRt.offsetMax = new Vector2(-2f, -2f);
+
+            // 血条数字（血条右侧）
+            _healthText = CreateText(canvasObj.transform, "HealthText", new Vector2(0f, 1f), new Vector2(340f, -30f), TextAnchor.MiddleLeft);
+            _healthText.fontSize = 22;
+            _healthText.text = "100/100";
 
             // 时间文本（血条下方）
             _timeText = CreateText(canvasObj.transform, "TimeText", new Vector2(0f, 1f), new Vector2(30f, -70f), TextAnchor.MiddleLeft);

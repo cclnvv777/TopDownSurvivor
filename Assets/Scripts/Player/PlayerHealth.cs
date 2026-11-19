@@ -22,6 +22,15 @@ namespace TopDownSurvivor.Player
         public int MaxHealth => _maxHealth;
         public int CurrentHealth => _currentHealth;
 
+        /// <summary>
+        /// 提升生命上限并回复等量生命（升级强化用）。
+        /// </summary>
+        public void IncreaseMaxHealth(int amount)
+        {
+            _maxHealth += amount;
+            _currentHealth += amount;
+        }
+
         private void Awake()
         {
             _currentHealth = _maxHealth;

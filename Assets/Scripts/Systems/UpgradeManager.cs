@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TopDownSurvivor.Player;
+using TopDownSurvivor.Weapons;
 
 namespace TopDownSurvivor.Systems
 {
@@ -36,7 +37,7 @@ namespace TopDownSurvivor.Systems
         private void RollOptions()
         {
             // 洗牌：把三种强化打乱顺序，保证三个选项不重复
-            int[] all = { 0, 1, 2 };
+            int[] all = { 0, 1, 2, 3, 4, 5 };
             for (int i = all.Length - 1; i > 0; i--)
             {
                 int j = Random.Range(0, i + 1);
@@ -66,6 +67,9 @@ namespace TopDownSurvivor.Systems
                 case UpgradeType.FireRate: return "攻击速度提升";
                 case UpgradeType.Damage: return "攻击力提升";
                 case UpgradeType.MoveSpeed: return "移动速度提升";
+                case UpgradeType.MaxHealth: return "生命上限提升";
+                case UpgradeType.ExperienceGain: return "经验获取提升";
+                case UpgradeType.OrbitingBlade: return "环绕刀刃";
                 default: return string.Empty;
             }
         }
@@ -89,6 +93,19 @@ namespace TopDownSurvivor.Systems
                     break;
                 case UpgradeType.MoveSpeed:
                     FindObjectOfType<PlayerMovement>().IncreaseMoveSpeed(0.5f);
+                    break;
+                case UpgradeType.MaxHealth:
+                    FindObjectOfType<PlayerHealth>().IncreaseMaxHealth(20);
+                    break;
+                case UpgradeType.ExperienceGain:
+                    FindObjectOfType<PlayerExperience>().IncreaseExperienceGain(0.5f);
+                    break;
+                case UpgradeType.OrbitingBlade:
+                    OrbitingWeapon weapon = FindObjectOfType<OrbitingWeapon>();
+                    if (weapon != null)
+                    {
+                        weapon.AddBlade();
+                    }
                     break;
             }
         }
