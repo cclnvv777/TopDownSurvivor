@@ -22,12 +22,15 @@ namespace TopDownSurvivor.Enemies
     /// </summary>
     public class Enemy : MonoBehaviour
     {
-        [SerializeField] private float _moveSpeed = 2f;
-        [SerializeField] private int _maxHealth = 1; // 生命值（1 发子弹打死）
-        [SerializeField] private int _contactDamage = 10; // 碰到玩家造成的伤害
+        [SerializeField] protected float _moveSpeed = 2f;
+        [SerializeField] private int _maxHealth = 1; // 普通怪生命值
+        [SerializeField] private int _contactDamage = 10; // 普通怪接触伤害
+        [SerializeField] private int _eliteMaxHealth = 5; // 精英怪生命值
+        [SerializeField] private int _eliteContactDamage = 30; // 精英怪接触伤害
 
         private int _currentHealth;
-        private Transform _player;
+        private int _currentContactDamage; // 当前接触伤害（普通或精英）
+        protected Transform _player;
         private ObjectPool<Enemy> _pool; // 这个敌人属于哪个对象池
 
         private void Awake()
@@ -43,6 +46,7 @@ namespace TopDownSurvivor.Enemies
             col.radius = 0.5f;
 
             _currentHealth = _maxHealth; // 初始满血
+            _currentContactDamage = _contactDamage; // 初始普通伤害
         }
 
         private void Start()
@@ -62,18 +66,42 @@ namespace TopDownSurvivor.Enemies
                 return;
             }
 
+            Move();
+        }
+
+        /// <summary>
+        /// 移动行为（子类可重写，如远程怪保持距离）。
+        /// </summary>
+        protected virtual void Move()
+        {
             Vector3 direction = (_player.position - transform.position).normalized;
             transform.position += direction * _moveSpeed * Time.deltaTime;
         }
 
         /// <summary>
-        /// 出生/复用：设置出生位置、重置生命值、记录归属的对象池。
+        /// 出生/复用：设置出生位置、重置生命值、记录归属的对象池，并设置移速（随难度递增）。
         /// </summary>
-        public void Init(Vector3 spawnPos, ObjectPool<Enemy> pool)
+        public virtual void Init(Vector3 spawnPos, ObjectPool<Enemy> pool, float moveSpeed, bool isElite)
         {
             _pool = pool;
             transform.position = spawnPos;
-            _currentHealth = _maxHealth; // 重置生命值（复用的敌人可能残血）
+            _moveSpeed = moveSpeed; // 设置移速
+
+            if (isElite)
+            {
+                _currentHealth = _eliteMaxHealth;
+                _currentContactDamage = _eliteContactDamage;
+                _moveSpeed *= 0.7f; // 精英稍慢
+                GetComponent<SpriteRenderer>().color = new Color(0.8f, 0.4f, 1f); // 紫色
+                transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+            }
+            else
+            {
+                _currentHealth = _maxHealth;
+                _currentContactDamage = _contactDamage;
+                GetComponent<SpriteRenderer>().color = new Color(1f, 0.35f, 0.35f); // 红色
+                transform.localScale = Vector3.one;
+            }
         }
 
         /// <summary>
@@ -104,7 +132,7 @@ namespace TopDownSurvivor.Enemies
             PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
-                playerHealth.TakeDamage(_contactDamage);
+                playerHealth.TakeDamage(_currentContactDamage);
                 Recycle(); // 碰撞消失（不广播死亡事件，不掉经验）
             }
         }

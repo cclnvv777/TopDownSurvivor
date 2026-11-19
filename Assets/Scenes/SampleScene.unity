@@ -376,6 +376,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gemPrefab: {fileID: 6431850041314511512, guid: baaf797bd33e698408aff962eb9ef3e9, type: 3}
+  _poolSize: 30
 --- !u!4 &688662607
 Transform:
   m_ObjectHideFlags: 0
@@ -424,6 +425,8 @@ MonoBehaviour:
   _moveSpeed: 2
   _maxHealth: 1
   _contactDamage: 10
+  _eliteMaxHealth: 5
+  _eliteContactDamage: 30
 --- !u!212 &747655030
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -822,6 +825,16 @@ MonoBehaviour:
   _spawnInterval: 1.5
   _spawnRadius: 8
   _poolSize: 20
+  _minSpawnInterval: 0.3
+  _intervalDecreasePerSpawn: 0.03
+  _enemySpeedIncreasePerSpawn: 0.05
+  _eliteBaseChance: 0.05
+  _eliteMaxChance: 0.5
+  _eliteChanceIncreasePerSec: 0.01
+  _rangedEnemyPrefab: {fileID: 8344293894852878409, guid: fec7012f358cb1b40a3f76ba5b5b905e, type: 3}
+  _rangedBaseChance: 0.05
+  _rangedMaxChance: 0.3
+  _rangedChanceIncreasePerSec: 0.005
 --- !u!4 &2019941488
 Transform:
   m_ObjectHideFlags: 0

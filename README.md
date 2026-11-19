@@ -6,7 +6,8 @@
 
 - **对象池（Object Pool）**：子弹、敌人都复用，避免频繁 `Instantiate`/`Destroy` 导致的 GC 卡顿（性能优化核心）
 - **敌人追击 AI（Seek）**：通过向量相减 + 归一化实现追踪行为
-- **刷怪系统**：使用协程（Coroutine）定时从玩家四周生成敌人
+- **刷怪系统**：使用协程（Coroutine）定时从玩家四周生成敌人，难度随时间递增（刷怪加快、敌人变快）
+- **多种敌人类型**：普通怪、精英怪（血厚伤害高）、远程怪（保持距离射击），基于继承 + 重写实现
 - **自动攻击**：遍历敌人查找最近目标（线性求最小值算法）
 - **事件系统（EventBus）**：泛型类型安全事件总线，敌人死亡、玩家死亡事件解耦多个系统
 - **单例管理器（Singleton）**：懒加载 MonoBehaviour 单例基类
@@ -25,6 +26,9 @@
 - [x] 玩家生命值 + 敌人碰撞伤害 + 死亡
 - [x] 击杀掉落经验宝石 + 自动拾取
 - [x] 升级系统（三选一强化面板）
+- [x] 难度随时间递增（刷怪加快 / 敌人变快）
+- [x] 多种敌人类型（普通 / 精英 / 远程）
+- [x] 经验宝石对象池 + 自动吸附
 - [x] HUD（血条 / 存活时间 / 击杀数）
 - [x] 开始菜单 + 死亡结算 + 重新开始
 - [x] 音效 + 存档（最高分）
@@ -61,7 +65,9 @@ Assets/
 | Player/PlayerExperience.cs | 经验/等级/升级触发 |
 | Player/PlayerHealth.cs | 生命值/受伤/死亡 |
 | Enemies/Enemy.cs | 追击AI + 生命值 + 死亡事件 |
-| Enemies/EnemySpawner.cs | 刷怪器（对象池） |
+| Enemies/RangedEnemy.cs | 远程怪（继承 Enemy，保持距离射击） |
+| Enemies/EnemyBullet.cs | 敌人子弹（伤害玩家） |
+| Enemies/EnemySpawner.cs | 刷怪器（对象池 + 难度递增） |
 | Weapons/Bullet.cs | 子弹（对象池） |
 | Systems/ExperienceGem.cs | 经验宝石 |
 | Systems/ExperienceDropper.cs | 经验掉落（订阅敌人死亡事件） |

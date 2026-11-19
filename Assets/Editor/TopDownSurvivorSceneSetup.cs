@@ -20,6 +20,8 @@ namespace TopDownSurvivor.Editor
         private const string PlaceholderAssetPath = "Assets/Sprites/PlayerPlaceholder.png";
         private const string BulletPrefabPath = "Assets/Prefabs/Bullet.prefab";
         private const string EnemyPrefabPath = "Assets/Prefabs/Enemy.prefab";
+        private const string RangedEnemyPrefabPath = "Assets/Prefabs/RangedEnemy.prefab";
+        private const string EnemyBulletPrefabPath = "Assets/Prefabs/EnemyBullet.prefab";
 
         [MenuItem(MenuPath)]
         public static void SetupScene()
@@ -152,6 +154,61 @@ namespace TopDownSurvivor.Editor
             // 自动设置敌人预制体引用
             Enemy enemyPrefab = AssetDatabase.LoadAssetAtPath<Enemy>(EnemyPrefabPath);
             SetReference(es, "_enemyPrefab", enemyPrefab);
+
+            // 自动设置远程怪预制体引用
+            RangedEnemy rangedPrefab = EnsureRangedEnemyPrefab();
+            SetReference(es, "_rangedEnemyPrefab", rangedPrefab);
+        }
+
+        private static RangedEnemy EnsureRangedEnemyPrefab()
+        {
+            RangedEnemy ranged = AssetDatabase.LoadAssetAtPath<RangedEnemy>(RangedEnemyPrefabPath);
+            if (ranged == null)
+            {
+                GameObject go = new GameObject("RangedEnemy");
+                SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+                sr.sprite = EnsurePlaceholderSprite();
+                sr.color = new Color(1f, 0.6f, 0.2f); // 橙色
+                CircleCollider2D col = go.AddComponent<CircleCollider2D>();
+                col.isTrigger = true;
+                col.radius = 0.5f;
+                go.AddComponent<RangedEnemy>();
+                ranged = PrefabUtility.SaveAsPrefabAsset(go, RangedEnemyPrefabPath).GetComponent<RangedEnemy>();
+                Object.DestroyImmediate(go);
+            }
+
+            // 设置远程怪的子弹引用
+            EnemyBullet bullet = EnsureEnemyBulletPrefab();
+            SerializedObject so = new SerializedObject(ranged);
+            SerializedProperty prop = so.FindProperty("_bulletPrefab");
+            if (prop != null && prop.objectReferenceValue == null)
+            {
+                prop.objectReferenceValue = bullet;
+                so.ApplyModifiedProperties();
+                EditorUtility.SetDirty(ranged);
+                AssetDatabase.SaveAssets();
+            }
+
+            return ranged;
+        }
+
+        private static EnemyBullet EnsureEnemyBulletPrefab()
+        {
+            EnemyBullet bullet = AssetDatabase.LoadAssetAtPath<EnemyBullet>(EnemyBulletPrefabPath);
+            if (bullet != null)
+            {
+                return bullet;
+            }
+
+            GameObject go = new GameObject("EnemyBullet");
+            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = EnsurePlaceholderSprite();
+            sr.color = new Color(1f, 0.5f, 0f); // 橙色子弹
+            go.AddComponent<EnemyBullet>();
+
+            EnemyBullet prefab = PrefabUtility.SaveAsPrefabAsset(go, EnemyBulletPrefabPath).GetComponent<EnemyBullet>();
+            Object.DestroyImmediate(go);
+            return prefab;
         }
 
         private static void SetupGameManager()
