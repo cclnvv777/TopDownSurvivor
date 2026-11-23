@@ -14,7 +14,8 @@ namespace TopDownSurvivor.Player
         MoveSpeed,     // 移速
         MaxHealth,     // 生命上限
         ExperienceGain,// 经验获取
-        OrbitingBlade  // 环绕刀刃
+        OrbitingBlade, // 环绕刀刃
+        MultiShot      // 散射（多发子弹）
     }
 
     /// <summary>

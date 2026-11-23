@@ -15,6 +15,8 @@ namespace TopDownSurvivor.Player
         [SerializeField] private float _fireInterval = 0.5f; // 发射间隔（秒）
         [SerializeField] private int _poolSize = 20;        // 预创建子弹数量
         [SerializeField] private int _damage = 1;            // 当前攻击力（升级可提升）
+        [SerializeField] private int _projectileCount = 1;    // 每次发射的子弹数（升级可提升）
+        [SerializeField] private float _spreadAngle = 15f;    // 多颗子弹之间的夹角（度）
 
         private ObjectPool<Bullet> _bulletPool;
 
@@ -41,12 +43,20 @@ namespace TopDownSurvivor.Player
                 return; // 场上没有敌人，不发射
             }
 
-            // 发射方向：从玩家指向最近敌人
-            Vector3 direction = (nearest.transform.position - transform.position).normalized;
+            // 基础方向：从玩家指向最近敌人
+            Vector3 baseDirection = (nearest.transform.position - transform.position).normalized;
 
-            Bullet bullet = _bulletPool.Get();             // 从池里取（不再 Instantiate）
-            bullet.transform.position = transform.position; // 设置出生位置
-            bullet.Init(direction, _bulletPool, _damage);   // 设定方向 + 归属的池 + 伤害
+            // 发射多颗子弹（扇形分布）
+            for (int i = 0; i < _projectileCount; i++)
+            {
+                // 中间那颗对准敌人，其余往两边偏移
+                float angle = (i - (_projectileCount - 1) / 2f) * _spreadAngle;
+                Vector3 direction = Quaternion.Euler(0f, 0f, angle) * baseDirection;
+
+                Bullet bullet = _bulletPool.Get();             // 从池里取（不再 Instantiate）
+                bullet.transform.position = transform.position; // 设置出生位置
+                bullet.Init(direction, _bulletPool, _damage);   // 设定方向 + 归属的池 + 伤害
+            }
         }
 
         /// <summary>
@@ -90,6 +100,14 @@ namespace TopDownSurvivor.Player
         public void IncreaseDamage(int amount)
         {
             _damage += amount;
+        }
+
+        /// <summary>
+        /// 提升散射（每次多发射一颗子弹）。
+        /// </summary>
+        public void IncreaseProjectileCount(int amount)
+        {
+            _projectileCount += amount;
         }
     }
 }

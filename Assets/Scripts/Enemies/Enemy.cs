@@ -1,6 +1,7 @@
 using UnityEngine;
 using TopDownSurvivor.Core;
 using TopDownSurvivor.Player;
+using TopDownSurvivor.Systems;
 
 namespace TopDownSurvivor.Enemies
 {
@@ -110,6 +111,10 @@ namespace TopDownSurvivor.Enemies
         public void TakeDamage(int damage)
         {
             _currentHealth -= damage;
+            if (DamagePopupManager.Instance != null)
+            {
+                DamagePopupManager.Instance.ShowDamage(transform.position, damage, Color.white);
+            }
             if (_currentHealth <= 0)
             {
                 Die();

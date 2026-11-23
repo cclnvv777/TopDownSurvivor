@@ -36,6 +36,7 @@ namespace TopDownSurvivor.Editor
             SetupHUD();
             SetupMenu();
             SetupAudioManager();
+            SetupDamagePopupManager();
 
             var activeScene = EditorSceneManager.GetActiveScene();
             if (string.IsNullOrEmpty(activeScene.path))
@@ -246,6 +247,11 @@ namespace TopDownSurvivor.Editor
             cam.transform.position = new Vector3(0f, 0f, -10f);
             cam.clearFlags = CameraClearFlags.SolidColor;
             cam.backgroundColor = new Color(0.08f, 0.08f, 0.12f);
+
+            if (cam.GetComponent<CameraShake>() == null)
+            {
+                cam.gameObject.AddComponent<CameraShake>();
+            }
         }
 
         private static void SetupExperienceSystem()
@@ -320,6 +326,20 @@ namespace TopDownSurvivor.Editor
             if (am.GetComponent<AudioManager>() == null)
             {
                 am.AddComponent<AudioManager>();
+            }
+        }
+
+        private static void SetupDamagePopupManager()
+        {
+            GameObject dpm = GameObject.Find("DamagePopupManager");
+            if (dpm == null)
+            {
+                dpm = new GameObject("DamagePopupManager");
+            }
+
+            if (dpm.GetComponent<DamagePopupManager>() == null)
+            {
+                dpm.AddComponent<DamagePopupManager>();
             }
         }
 
