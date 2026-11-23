@@ -35,6 +35,7 @@ namespace TopDownSurvivor.Editor
             SetupUpgradeManager();
             SetupHUD();
             SetupMenu();
+            SetupPauseMenu();
             SetupAudioManager();
             SetupDamagePopupManager();
 
@@ -315,6 +316,20 @@ namespace TopDownSurvivor.Editor
             }
         }
 
+        private static void SetupPauseMenu()
+        {
+            GameObject pause = GameObject.Find("PauseMenuManager");
+            if (pause == null)
+            {
+                pause = new GameObject("PauseMenuManager");
+            }
+
+            if (pause.GetComponent<PauseMenuManager>() == null)
+            {
+                pause.AddComponent<PauseMenuManager>();
+            }
+        }
+
         private static void SetupAudioManager()
         {
             GameObject am = GameObject.Find("AudioManager");
@@ -358,7 +373,7 @@ namespace TopDownSurvivor.Editor
             GameObject go = new GameObject("ExperienceGem");
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = EnsurePlaceholderSprite();
-            sr.color = new Color(0.4f, 1f, 0.4f); // 绿色
+            sr.color = new Color(1f, 0.85f, 0.3f); // 金色
 
             CircleCollider2D col = go.AddComponent<CircleCollider2D>();
             col.isTrigger = true;

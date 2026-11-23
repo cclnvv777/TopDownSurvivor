@@ -32,6 +32,7 @@
 - [x] 多种敌人类型（普通 / 精英 / 远程）
 - [x] 经验宝石对象池 + 自动吸附
 - [x] 伤害数字飘字 / 玩家无敌帧 / 屏幕震动 / 散射子弹
+- [x] 敌人死亡特效 + 暂停菜单（ESC）
 - [x] 更多强化（生命上限 / 经验获取 / 环绕刀刃）
 - [x] 环绕刀刃武器（绕玩家旋转）
 - [x] 血条数字显示
@@ -85,6 +86,9 @@ Assets/
 | Systems/CameraShake.cs | 屏幕震动 |
 | Systems/DamagePopup.cs | 伤害数字飘字 |
 | Systems/DamagePopupManager.cs | 飘字对象池管理 |
+| Systems/DeathEffect.cs | 敌人死亡特效 |
+| Systems/DeathEffectManager.cs | 死亡特效对象池 |
+| Systems/PauseMenuManager.cs | 暂停菜单（ESC） |
 | Editor/TopDownSurvivorSceneSetup.cs | 一键搭建场景 |
 
 ## 技术栈

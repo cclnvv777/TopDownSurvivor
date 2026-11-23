@@ -123,6 +123,18 @@ namespace TopDownSurvivor.Enemies
 
         private void Die()
         {
+            // 播放死亡特效（同色闪光）
+            if (DeathEffectManager.Instance != null)
+            {
+                Color color = Color.yellow;
+                SpriteRenderer sr = GetComponent<SpriteRenderer>();
+                if (sr != null)
+                {
+                    color = sr.color;
+                }
+                DeathEffectManager.Instance.PlayEffect(transform.position, color);
+            }
+
             // 广播「敌人死亡」事件（含死亡位置），谁关心谁订阅——敌人自己不知道有谁在听
             EventBus<EnemyDiedEvent>.Publish(new EnemyDiedEvent(transform.position));
 

@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddecfef48c6eba74fbd8bf3ffc74edb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gemPrefab: {fileID: 6431850041314511512, guid: baaf797bd33e698408aff962eb9ef3e9, type: 3}
+  _gemPrefab: {fileID: 7091638545155740035, guid: baaf797bd33e698408aff962eb9ef3e9, type: 3}
   _poolSize: 30
 --- !u!4 &688662607
 Transform:
@@ -590,6 +590,50 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1214131053}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1366818653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1366818655}
+  - component: {fileID: 1366818654}
+  m_Layer: 0
+  m_Name: PauseMenuManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1366818654
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366818653}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8e68965b7491354db9e5c673fcb9c18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1366818655
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366818653}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -825,6 +869,8 @@ MonoBehaviour:
   _fireInterval: 0.5
   _poolSize: 20
   _damage: 1
+  _projectileCount: 1
+  _spreadAngle: 15
 --- !u!114 &1621305699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,3 +989,4 @@ SceneRoots:
   - {fileID: 379912368}
   - {fileID: 561880061}
   - {fileID: 1214131055}
+  - {fileID: 1366818655}
