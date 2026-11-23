@@ -13,7 +13,7 @@
 - **单例管理器（Singleton）**：懒加载 MonoBehaviour 单例基类
 - **升级系统**：三选一强化（攻速/攻击力/移速/生命上限/经验获取/环绕刀刃/散射/穿透），用洗牌算法去重，代码动态创建 UI
 - **多武器**：自动射击（可散射）+ 环绕刀刃（刀刃绕玩家旋转）
-- **战斗反馈**：伤害数字飘字、受伤无敌帧（闪烁）、屏幕震动
+- **战斗反馈**：伤害数字飘字、敌人受击闪白、受伤无敌帧、屏幕震动
 - **UI 系统**：血条、HUD、菜单、结算全部代码动态创建，不依赖手动拖拽
 - **音效系统**：AudioManager 单例 + 事件触发
 - **存档系统**：PlayerPrefs 保存最高存活时间
@@ -34,6 +34,7 @@
 - [x] 伤害数字飘字 / 玩家无敌帧 / 屏幕震动 / 散射子弹
 - [x] 敌人死亡特效 + 暂停菜单（ESC）
 - [x] 穿透子弹 + BOSS 波次
+- [x] 掉落系统（经验 / 血包 / 大经验）+ 敌人受击闪白
 - [x] 更多强化（生命上限 / 经验获取 / 环绕刀刃）
 - [x] 环绕刀刃武器（绕玩家旋转）
 - [x] 血条数字显示
@@ -80,7 +81,8 @@ Assets/
 | Weapons/OrbitingWeapon.cs | 环绕刀刃（绕玩家旋转） |
 | Weapons/BladeHit.cs | 刀刃碰撞伤害 |
 | Systems/ExperienceGem.cs | 经验宝石 |
-| Systems/ExperienceDropper.cs | 经验掉落（订阅敌人死亡事件） |
+| Systems/ExperienceDropper.cs | 掉落系统（经验/血包/大经验） |
+| Systems/HealthPack.cs | 血包（回血） |
 | Systems/UpgradeManager.cs | 升级三选一强化面板 |
 | Systems/HUDManager.cs | HUD（血条/时间/击杀数） |
 | Systems/MenuManager.cs | 开始菜单 + 死亡结算 + 游戏流程 |

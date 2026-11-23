@@ -391,7 +391,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gemPrefab: {fileID: 7091638545155740035, guid: baaf797bd33e698408aff962eb9ef3e9, type: 3}
+  _healthPackPrefab: {fileID: 6873766708664428551, guid: 8d042828b856deb4ab3da86d7d288097, type: 3}
   _poolSize: 30
+  _healthPackChance: 0.1
+  _bigExpChance: 0.05
 --- !u!4 &688662607
 Transform:
   m_ObjectHideFlags: 0
@@ -442,6 +445,8 @@ MonoBehaviour:
   _contactDamage: 10
   _eliteMaxHealth: 5
   _eliteContactDamage: 30
+  _bossMaxHealth: 20
+  _bossContactDamage: 40
 --- !u!212 &747655030
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -871,6 +876,7 @@ MonoBehaviour:
   _damage: 1
   _projectileCount: 1
   _spreadAngle: 15
+  _pierce: 0
 --- !u!114 &1621305699
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -959,6 +965,7 @@ MonoBehaviour:
   _rangedBaseChance: 0.05
   _rangedMaxChance: 0.3
   _rangedChanceIncreasePerSec: 0.005
+  _bossInterval: 45
 --- !u!4 &2019941488
 Transform:
   m_ObjectHideFlags: 0

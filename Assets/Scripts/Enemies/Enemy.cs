@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using TopDownSurvivor.Core;
 using TopDownSurvivor.Player;
@@ -35,6 +36,7 @@ namespace TopDownSurvivor.Enemies
         private int _currentContactDamage; // 当前接触伤害（普通或精英）
         protected Transform _player;
         private ObjectPool<Enemy> _pool; // 这个敌人属于哪个对象池
+        private Coroutine _flashRoutine; // 受击闪白协程
 
         private void Awake()
         {
@@ -125,10 +127,35 @@ namespace TopDownSurvivor.Enemies
             {
                 DamagePopupManager.Instance.ShowDamage(transform.position, damage, Color.white);
             }
+
+            // 受击闪白
+            if (_flashRoutine != null)
+            {
+                StopCoroutine(_flashRoutine);
+            }
+            _flashRoutine = StartCoroutine(FlashWhite());
+
             if (_currentHealth <= 0)
             {
                 Die();
             }
+        }
+
+        /// <summary>
+        /// 受击闪白：短暂变白后恢复原色，提供打击反馈。
+        /// </summary>
+        private IEnumerator FlashWhite()
+        {
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr == null)
+            {
+                yield break;
+            }
+
+            Color original = sr.color; // 保存原色（红/紫/橙/深红）
+            sr.color = Color.white;    // 闪白
+            yield return new WaitForSeconds(0.1f);
+            sr.color = original;       // 恢复原色
         }
 
         private void Die()
@@ -169,6 +196,12 @@ namespace TopDownSurvivor.Enemies
         /// </summary>
         private void Recycle()
         {
+            if (_flashRoutine != null)
+            {
+                StopCoroutine(_flashRoutine);
+                _flashRoutine = null;
+            }
+
             if (_pool != null)
             {
                 _pool.Release(this); // 回池复用

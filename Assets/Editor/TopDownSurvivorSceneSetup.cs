@@ -272,6 +272,9 @@ namespace TopDownSurvivor.Editor
 
             ExperienceGem gemPrefab = EnsureGemPrefab();
             SetReference(ed, "_gemPrefab", gemPrefab);
+
+            HealthPack healthPackPrefab = EnsureHealthPackPrefab();
+            SetReference(ed, "_healthPackPrefab", healthPackPrefab);
         }
 
         private static void SetupUpgradeManager()
@@ -382,6 +385,34 @@ namespace TopDownSurvivor.Editor
             go.AddComponent<ExperienceGem>();
 
             ExperienceGem prefab = PrefabUtility.SaveAsPrefabAsset(go, gemPath).GetComponent<ExperienceGem>();
+            Object.DestroyImmediate(go);
+            return prefab;
+        }
+
+        /// <summary>
+        /// 确保血包预制体存在，不存在则自动创建并保存。
+        /// </summary>
+        private static HealthPack EnsureHealthPackPrefab()
+        {
+            const string path = "Assets/Prefabs/HealthPack.prefab";
+            HealthPack pack = AssetDatabase.LoadAssetAtPath<HealthPack>(path);
+            if (pack != null)
+            {
+                return pack;
+            }
+
+            GameObject go = new GameObject("HealthPack");
+            SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+            sr.sprite = EnsurePlaceholderSprite();
+            sr.color = new Color(1f, 0.4f, 0.45f); // 粉红色
+
+            CircleCollider2D col = go.AddComponent<CircleCollider2D>();
+            col.isTrigger = true;
+            col.radius = 0.4f;
+
+            go.AddComponent<HealthPack>();
+
+            HealthPack prefab = PrefabUtility.SaveAsPrefabAsset(go, path).GetComponent<HealthPack>();
             Object.DestroyImmediate(go);
             return prefab;
         }

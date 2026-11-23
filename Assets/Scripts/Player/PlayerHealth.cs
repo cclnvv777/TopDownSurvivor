@@ -36,6 +36,14 @@ namespace TopDownSurvivor.Player
             _currentHealth += amount;
         }
 
+        /// <summary>
+        /// 回复生命（不超过上限）。
+        /// </summary>
+        public void Heal(int amount)
+        {
+            _currentHealth = Mathf.Min(_maxHealth, _currentHealth + amount);
+        }
+
         private void Awake()
         {
             _currentHealth = _maxHealth;

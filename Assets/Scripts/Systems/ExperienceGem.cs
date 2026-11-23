@@ -32,10 +32,27 @@ namespace TopDownSurvivor.Systems
         /// <summary>
         /// 掉落/复用：设置位置、记录归属的池、缓存玩家。
         /// </summary>
-        public void Init(Vector3 spawnPos, ObjectPool<ExperienceGem> pool)
+        public void Init(Vector3 spawnPos, ObjectPool<ExperienceGem> pool, int experienceValue = 1)
         {
             _pool = pool;
+            _experienceValue = experienceValue;
             transform.position = spawnPos;
+
+            // 大经验宝石更大更亮
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+            {
+                if (experienceValue >= 5)
+                {
+                    transform.localScale = new Vector3(1.6f, 1.6f, 1f);
+                    sr.color = new Color(1f, 0.95f, 0.5f); // 亮金色
+                }
+                else
+                {
+                    transform.localScale = Vector3.one;
+                    sr.color = new Color(1f, 0.85f, 0.3f); // 金色
+                }
+            }
 
             if (_player == null)
             {
