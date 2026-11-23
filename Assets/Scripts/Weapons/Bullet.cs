@@ -13,6 +13,7 @@ namespace TopDownSurvivor.Weapons
         [SerializeField] private float _speed = 10f;
         [SerializeField] private float _lifeTime = 3f;
         [SerializeField] private int _damage = 1; // 伤害值
+        private int _pierce;                       // 还能穿透几个敌人（0 = 不穿透）
 
         private Rigidbody2D _rb;
         private ObjectPool<Bullet> _pool; // 这颗子弹属于哪个对象池
@@ -43,10 +44,11 @@ namespace TopDownSurvivor.Weapons
         /// <summary>
         /// 发射时调用：设定飞行方向，并记录它属于哪个对象池。
         /// </summary>
-        public void Init(Vector3 direction, ObjectPool<Bullet> pool, int damage)
+        public void Init(Vector3 direction, ObjectPool<Bullet> pool, int damage, int pierce = 0)
         {
             _pool = pool;
             _damage = damage; // 用传入的伤害覆盖默认值
+            _pierce = pierce; // 穿透次数
             _rb.velocity = direction.normalized * _speed; // 用刚体速度飞行
 
             // 启动超时回收计时
@@ -73,7 +75,15 @@ namespace TopDownSurvivor.Weapons
             if (enemy != null)
             {
                 enemy.TakeDamage(_damage); // 命中敌人 → 造成伤害
-                Recycle();                 // 子弹回收（不销毁）
+
+                if (_pierce > 0)
+                {
+                    _pierce--; // 穿透一个敌人，子弹继续飞
+                }
+                else
+                {
+                    Recycle(); // 不穿透，命中就回收
+                }
             }
         }
 

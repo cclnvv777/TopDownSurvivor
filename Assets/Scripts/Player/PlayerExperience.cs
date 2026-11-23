@@ -15,7 +15,8 @@ namespace TopDownSurvivor.Player
         MaxHealth,     // 生命上限
         ExperienceGain,// 经验获取
         OrbitingBlade, // 环绕刀刃
-        MultiShot      // 散射（多发子弹）
+        MultiShot,     // 散射（多发子弹）
+        Pierce         // 穿透（子弹穿过敌人）
     }
 
     /// <summary>

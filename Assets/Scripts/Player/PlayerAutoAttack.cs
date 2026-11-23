@@ -17,6 +17,7 @@ namespace TopDownSurvivor.Player
         [SerializeField] private int _damage = 1;            // 当前攻击力（升级可提升）
         [SerializeField] private int _projectileCount = 1;    // 每次发射的子弹数（升级可提升）
         [SerializeField] private float _spreadAngle = 15f;    // 多颗子弹之间的夹角（度）
+        [SerializeField] private int _pierce;                 // 穿透次数（升级可提升）
 
         private ObjectPool<Bullet> _bulletPool;
 
@@ -55,7 +56,7 @@ namespace TopDownSurvivor.Player
 
                 Bullet bullet = _bulletPool.Get();             // 从池里取（不再 Instantiate）
                 bullet.transform.position = transform.position; // 设置出生位置
-                bullet.Init(direction, _bulletPool, _damage);   // 设定方向 + 归属的池 + 伤害
+                bullet.Init(direction, _bulletPool, _damage, _pierce);   // 设定方向 + 归属的池 + 伤害 + 穿透
             }
         }
 
@@ -108,6 +109,14 @@ namespace TopDownSurvivor.Player
         public void IncreaseProjectileCount(int amount)
         {
             _projectileCount += amount;
+        }
+
+        /// <summary>
+        /// 提升穿透（子弹可多穿过一个敌人）。
+        /// </summary>
+        public void IncreasePierce(int amount)
+        {
+            _pierce += amount;
         }
     }
 }

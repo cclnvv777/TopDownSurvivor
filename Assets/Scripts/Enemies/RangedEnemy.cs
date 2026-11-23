@@ -40,9 +40,9 @@ namespace TopDownSurvivor.Enemies
         /// <summary>
         /// 重写出生：先按普通逻辑初始化，再把颜色改成橙色（远程怪专属）。
         /// </summary>
-        public override void Init(Vector3 spawnPos, ObjectPool<Enemy> pool, float moveSpeed, bool isElite)
+        public override void Init(Vector3 spawnPos, ObjectPool<Enemy> pool, float moveSpeed, bool isElite, bool isBoss = false)
         {
-            base.Init(spawnPos, pool, moveSpeed, isElite);
+            base.Init(spawnPos, pool, moveSpeed, isElite, isBoss);
             GetComponent<SpriteRenderer>().color = new Color(1f, 0.6f, 0.2f); // 橙色
         }
 

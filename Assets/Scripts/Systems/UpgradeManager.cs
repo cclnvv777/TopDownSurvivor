@@ -37,7 +37,7 @@ namespace TopDownSurvivor.Systems
         private void RollOptions()
         {
             // 洗牌：把三种强化打乱顺序，保证三个选项不重复
-            int[] all = { 0, 1, 2, 3, 4, 5, 6 };
+            int[] all = { 0, 1, 2, 3, 4, 5, 6, 7 };
             for (int i = all.Length - 1; i > 0; i--)
             {
                 int j = Random.Range(0, i + 1);
@@ -71,6 +71,7 @@ namespace TopDownSurvivor.Systems
                 case UpgradeType.ExperienceGain: return "经验获取提升";
                 case UpgradeType.OrbitingBlade: return "环绕刀刃";
                 case UpgradeType.MultiShot: return "散射子弹";
+                case UpgradeType.Pierce: return "穿透子弹";
                 default: return string.Empty;
             }
         }
@@ -110,6 +111,9 @@ namespace TopDownSurvivor.Systems
                     break;
                 case UpgradeType.MultiShot:
                     FindObjectOfType<PlayerAutoAttack>().IncreaseProjectileCount(1);
+                    break;
+                case UpgradeType.Pierce:
+                    FindObjectOfType<PlayerAutoAttack>().IncreasePierce(1);
                     break;
             }
         }

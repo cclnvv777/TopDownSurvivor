@@ -23,6 +23,7 @@ namespace TopDownSurvivor.Enemies
         [SerializeField] private float _rangedBaseChance = 0.05f;  // 远程怪初始概率
         [SerializeField] private float _rangedMaxChance = 0.3f;    // 远程怪最大概率
         [SerializeField] private float _rangedChanceIncreasePerSec = 0.005f; // 每秒增加概率
+        [SerializeField] private float _bossInterval = 45f; // BOSS 刷新间隔（秒）
 
         private Transform _player;
         private ObjectPool<Enemy> _enemyPool;
@@ -42,6 +43,7 @@ namespace TopDownSurvivor.Enemies
             _enemyPool = new ObjectPool<Enemy>(_enemyPrefab, _poolSize);
             _rangedEnemyPool = new ObjectPool<Enemy>(_rangedEnemyPrefab, _poolSize);
             StartCoroutine(SpawnLoop());
+            StartCoroutine(BossSpawnLoop());
         }
 
         private void Update()
@@ -61,6 +63,25 @@ namespace TopDownSurvivor.Enemies
 
                 SpawnOneEnemy();
             }
+        }
+
+        private IEnumerator BossSpawnLoop()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(_bossInterval);
+                SpawnBoss();
+            }
+        }
+
+        private void SpawnBoss()
+        {
+            Vector2 dir = Random.insideUnitCircle.normalized;
+            Vector3 center = _player != null ? _player.position : transform.position;
+            Vector3 spawnPos = center + (Vector3)(dir * _spawnRadius);
+
+            Enemy boss = _enemyPool.Get();
+            boss.Init(spawnPos, _enemyPool, _enemySpeed, false, true); // isBoss = true
         }
 
         private void SpawnOneEnemy()

@@ -28,6 +28,8 @@ namespace TopDownSurvivor.Enemies
         [SerializeField] private int _contactDamage = 10; // 普通怪接触伤害
         [SerializeField] private int _eliteMaxHealth = 5; // 精英怪生命值
         [SerializeField] private int _eliteContactDamage = 30; // 精英怪接触伤害
+        [SerializeField] private int _bossMaxHealth = 20; // BOSS 生命值
+        [SerializeField] private int _bossContactDamage = 40; // BOSS 接触伤害
 
         private int _currentHealth;
         private int _currentContactDamage; // 当前接触伤害（普通或精英）
@@ -82,13 +84,21 @@ namespace TopDownSurvivor.Enemies
         /// <summary>
         /// 出生/复用：设置出生位置、重置生命值、记录归属的对象池，并设置移速（随难度递增）。
         /// </summary>
-        public virtual void Init(Vector3 spawnPos, ObjectPool<Enemy> pool, float moveSpeed, bool isElite)
+        public virtual void Init(Vector3 spawnPos, ObjectPool<Enemy> pool, float moveSpeed, bool isElite, bool isBoss = false)
         {
             _pool = pool;
             transform.position = spawnPos;
             _moveSpeed = moveSpeed; // 设置移速
 
-            if (isElite)
+            if (isBoss)
+            {
+                _currentHealth = _bossMaxHealth;
+                _currentContactDamage = _bossContactDamage;
+                _moveSpeed *= 0.6f; // BOSS 慢但厚
+                GetComponent<SpriteRenderer>().color = new Color(1f, 0.2f, 0.1f); // 深红色
+                transform.localScale = new Vector3(2f, 2f, 1f);
+            }
+            else if (isElite)
             {
                 _currentHealth = _eliteMaxHealth;
                 _currentContactDamage = _eliteContactDamage;
