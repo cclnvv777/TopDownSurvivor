@@ -38,6 +38,7 @@ namespace TopDownSurvivor.Editor
             SetupPauseMenu();
             SetupAudioManager();
             SetupDamagePopupManager();
+            SetupKillAnnouncer();
 
             var activeScene = EditorSceneManager.GetActiveScene();
             if (string.IsNullOrEmpty(activeScene.path))
@@ -330,6 +331,20 @@ namespace TopDownSurvivor.Editor
             if (pause.GetComponent<PauseMenuManager>() == null)
             {
                 pause.AddComponent<PauseMenuManager>();
+            }
+        }
+
+        private static void SetupKillAnnouncer()
+        {
+            GameObject ka = GameObject.Find("KillAnnouncer");
+            if (ka == null)
+            {
+                ka = new GameObject("KillAnnouncer");
+            }
+
+            if (ka.GetComponent<KillAnnouncer>() == null)
+            {
+                ka.AddComponent<KillAnnouncer>();
             }
         }
 

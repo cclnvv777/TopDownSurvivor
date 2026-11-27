@@ -15,6 +15,7 @@ namespace TopDownSurvivor.Systems
         private Canvas _gameOverCanvas;
         private Text _timeResult;
         private Text _killResult;
+        private Text _levelResult;
 
         private void Awake()
         {
@@ -50,8 +51,12 @@ namespace TopDownSurvivor.Systems
 
             SaveSystem.SaveBestTime(surviveTime); // 保存最高分
 
+            PlayerExperience pe = FindObjectOfType<PlayerExperience>();
+            int level = pe != null ? pe.Level : 1;
+
             _timeResult.text = "存活时间：" + FormatTime(surviveTime);
             _killResult.text = "击杀数：" + killCount + "    最高存活：" + FormatTime(SaveSystem.LoadBestTime());
+            _levelResult.text = "等级：" + level;
 
             _gameOverCanvas.gameObject.SetActive(true);
             Time.timeScale = 0f; // 暂停
@@ -117,8 +122,9 @@ namespace TopDownSurvivor.Systems
 
             _timeResult = CreateText(canvasObj.transform, "TimeResult", new Vector2(0.5f, 0.5f), new Vector2(0f, 40f), 36, TextAnchor.MiddleCenter);
             _killResult = CreateText(canvasObj.transform, "KillResult", new Vector2(0.5f, 0.5f), new Vector2(0f, -30f), 36, TextAnchor.MiddleCenter);
+            _levelResult = CreateText(canvasObj.transform, "LevelResult", new Vector2(0.5f, 0.5f), new Vector2(0f, -100f), 36, TextAnchor.MiddleCenter);
 
-            Button restartBtn = CreateButton(canvasObj.transform, "RestartButton", new Vector2(0.5f, 0.5f), new Vector2(0f, -150f), "重新开始");
+            Button restartBtn = CreateButton(canvasObj.transform, "RestartButton", new Vector2(0.5f, 0.5f), new Vector2(0f, -180f), "重新开始");
             restartBtn.onClick.AddListener(OnRestartClicked);
         }
 

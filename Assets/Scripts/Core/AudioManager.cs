@@ -12,6 +12,8 @@ namespace TopDownSurvivor.Core
     {
         private AudioSource _audioSource;
         private AudioClip _enemyDieClip;
+        private AudioClip _eliteDieClip;
+        private AudioClip _bossDieClip;
         private AudioClip _playerHurtClip;
         private AudioClip _levelUpClip;
         private AudioClip _pickupClip;
@@ -24,7 +26,9 @@ namespace TopDownSurvivor.Core
             _audioSource.playOnAwake = false;
 
             // 程序化生成占位音效（不同频率的「哔」声）
-            _enemyDieClip = CreateBeep(200f, 0.1f);
+            _enemyDieClip = CreateBeep(350f, 0.15f);
+            _eliteDieClip = CreateBeep(500f, 0.2f);
+            _bossDieClip = CreateBeep(700f, 0.3f);
             _playerHurtClip = CreateBeep(400f, 0.15f);
             _levelUpClip = CreateBeep(800f, 0.2f);
             _pickupClip = CreateBeep(600f, 0.05f);
@@ -44,7 +48,18 @@ namespace TopDownSurvivor.Core
 
         private void OnEnemyDied(EnemyDiedEvent e)
         {
-            PlaySound(_enemyDieClip);
+            if (e.IsBoss)
+            {
+                PlaySound(_bossDieClip);   // BOSS：低沉
+            }
+            else if (e.IsElite)
+            {
+                PlaySound(_eliteDieClip);  // 精英：中音
+            }
+            else
+            {
+                PlaySound(_enemyDieClip);  // 普通：高音
+            }
         }
 
         private void OnPlayerDied(PlayerDiedEvent e)

@@ -35,6 +35,7 @@
 - [x] 敌人死亡特效 + 暂停菜单（ESC）
 - [x] 穿透子弹 + BOSS 波次
 - [x] 掉落系统（经验 / 血包 / 大经验）+ 敌人受击闪白
+- [x] 击杀/连杀提示 + 升级面板等级 + 结算等级 + 多敌人音效
 - [x] 更多强化（生命上限 / 经验获取 / 环绕刀刃）
 - [x] 环绕刀刃武器（绕玩家旋转）
 - [x] 血条数字显示
@@ -83,6 +84,7 @@ Assets/
 | Systems/ExperienceGem.cs | 经验宝石 |
 | Systems/ExperienceDropper.cs | 掉落系统（经验/血包/大经验） |
 | Systems/HealthPack.cs | 血包（回血） |
+| Systems/KillAnnouncer.cs | 击杀/连杀提示 |
 | Systems/UpgradeManager.cs | 升级三选一强化面板 |
 | Systems/HUDManager.cs | HUD（血条/时间/击杀数） |
 | Systems/MenuManager.cs | 开始菜单 + 死亡结算 + 游戏流程 |

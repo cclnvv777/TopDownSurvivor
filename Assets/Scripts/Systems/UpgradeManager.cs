@@ -12,6 +12,7 @@ namespace TopDownSurvivor.Systems
     public class UpgradeManager : MonoBehaviour
     {
         private Canvas _canvas;
+        private Text _titleText;
         private readonly Button[] _buttons = new Button[3];
         private readonly Text[] _labels = new Text[3];
         private readonly UpgradeType[] _options = new UpgradeType[3];
@@ -28,6 +29,12 @@ namespace TopDownSurvivor.Systems
         public void ShowUpgrades()
         {
             Time.timeScale = 0f; // 暂停游戏
+
+            PlayerExperience pe = FindObjectOfType<PlayerExperience>();
+            if (pe != null && _titleText != null)
+            {
+                _titleText.text = "升级！当前等级 " + pe.Level;
+            }
 
             RollOptions();
             RefreshLabels();
@@ -147,6 +154,19 @@ namespace TopDownSurvivor.Systems
             prt.anchorMax = Vector2.one;
             prt.offsetMin = Vector2.zero;
             prt.offsetMax = Vector2.zero;
+
+            // 标题（显示等级）
+            GameObject titleObj = new GameObject("TitleText");
+            titleObj.transform.SetParent(canvasObj.transform, false);
+            _titleText = titleObj.AddComponent<Text>();
+            _titleText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            _titleText.fontSize = 40;
+            _titleText.fontStyle = FontStyle.Bold;
+            _titleText.color = Color.white;
+            _titleText.alignment = TextAnchor.MiddleCenter;
+            RectTransform titleRt = _titleText.rectTransform;
+            titleRt.anchoredPosition = new Vector2(0f, 220f);
+            titleRt.sizeDelta = new Vector2(600f, 60f);
 
             // 3 个按钮，竖排
             for (int i = 0; i < 3; i++)

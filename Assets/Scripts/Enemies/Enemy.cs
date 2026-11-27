@@ -12,10 +12,14 @@ namespace TopDownSurvivor.Enemies
     public readonly struct EnemyDiedEvent
     {
         public readonly Vector3 Position;
+        public readonly bool IsElite;
+        public readonly bool IsBoss;
 
-        public EnemyDiedEvent(Vector3 position)
+        public EnemyDiedEvent(Vector3 position, bool isElite, bool isBoss)
         {
             Position = position;
+            IsElite = isElite;
+            IsBoss = isBoss;
         }
     }
 
@@ -34,6 +38,8 @@ namespace TopDownSurvivor.Enemies
 
         private int _currentHealth;
         private int _currentContactDamage; // 当前接触伤害（普通或精英）
+        private bool _isElite;
+        private bool _isBoss;
         protected Transform _player;
         private ObjectPool<Enemy> _pool; // 这个敌人属于哪个对象池
         private Coroutine _flashRoutine; // 受击闪白协程
@@ -89,6 +95,8 @@ namespace TopDownSurvivor.Enemies
         public virtual void Init(Vector3 spawnPos, ObjectPool<Enemy> pool, float moveSpeed, bool isElite, bool isBoss = false)
         {
             _pool = pool;
+            _isElite = isElite;
+            _isBoss = isBoss;
             transform.position = spawnPos;
             _moveSpeed = moveSpeed; // 设置移速
 
@@ -122,6 +130,11 @@ namespace TopDownSurvivor.Enemies
         /// </summary>
         public void TakeDamage(int damage)
         {
+            if (!gameObject.activeSelf || _currentHealth <= 0)
+            {
+                return; // 已回收或已死亡，不再受伤
+            }
+
             _currentHealth -= damage;
             if (DamagePopupManager.Instance != null)
             {
@@ -173,7 +186,7 @@ namespace TopDownSurvivor.Enemies
             }
 
             // 广播「敌人死亡」事件（含死亡位置），谁关心谁订阅——敌人自己不知道有谁在听
-            EventBus<EnemyDiedEvent>.Publish(new EnemyDiedEvent(transform.position));
+            EventBus<EnemyDiedEvent>.Publish(new EnemyDiedEvent(transform.position, _isElite, _isBoss));
 
             Recycle();
         }
